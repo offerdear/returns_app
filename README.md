@@ -2,9 +2,10 @@
 
 You will need to recreate node_modules on your own.
 
-Enter:
+If you haven't already, use
 
-```npm install
+```shell
+npm install
 ```
 
 Please let me know if this doesn't work.
