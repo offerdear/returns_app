@@ -307,7 +307,7 @@ export default function Index() {
                       to get started
                     </List.Item>
                     <List.Item>
-                      Explore Shopify’s API with{" "}
+                      Explore Shopify's API with{" "}
                       <Link
                         url="https://shopify.dev/docs/apps/tools/graphiql-admin-api"
                         target="_blank"
