@@ -3,7 +3,7 @@
 client_id = "6a26dd9e15c413338dd77b8f6fb08212"
 name = "smart-returns-app"
 handle = "smart-returns-app"
-application_url = "https://performs-arcade-dakota-rio.trycloudflare.com"
+application_url = "https://ct-summit-derby-attitudes.trycloudflare.com"
 embedded = true
 
 [build]
@@ -11,7 +11,7 @@ include_config_on_deploy = true
 automatically_update_urls_on_dev = true
 
 [webhooks]
-api_version = "2024-04"
+api_version = "2025-04"
 
   [[webhooks.subscriptions]]
   topics = [ "app/uninstalled" ]
@@ -23,10 +23,10 @@ api_version = "2024-04"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products, read_products, read_orders, write_orders"
+scopes = "write_products, read_products, read_orders, write_orders, read_customers"
 
 [auth]
-redirect_urls = ["https://performs-arcade-dakota-rio.trycloudflare.com/auth/callback", "https://performs-arcade-dakota-rio.trycloudflare.com/auth/shopify/callback", "https://performs-arcade-dakota-rio.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://ct-summit-derby-attitudes.trycloudflare.com/auth/callback", "https://ct-summit-derby-attitudes.trycloudflare.com/auth/shopify/callback", "https://ct-summit-derby-attitudes.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

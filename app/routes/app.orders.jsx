@@ -3,78 +3,92 @@ import { useLoaderData } from "@remix-run/react";
 import { Page, Layout, Card, Text, Badge, DataTable } from "@shopify/polaris";
 
 export const loader = async ({ request }) => {
-  // Import authenticate inside the loader (server-only)
-  const { authenticate } = await import("../shopify.server");
-  const { admin } = await authenticate.admin(request);
+  try {
+    const { authenticate } = await import("../shopify.server");
+    const { admin } = await authenticate.admin(request);
 
-  // Fetch orders from Shopify
-  const response = await admin.graphql(`
-    {
-      orders(first: 50, reverse: true) {
-        edges {
-          node {
-            id
-            name
-            createdAt
-            displayFulfillmentStatus
-            displayFinancialStatus
-            totalPriceSet {
-              shopMoney {
-                amount
-                currencyCode
-              }
+    let hasNextPage = true;
+    let endCursor = null;
+    const allOrders = [];
+
+    while (hasNextPage) {
+      const query = `
+        {
+          orders(first: 100${endCursor ? `, after: "${endCursor}"` : ""}) {
+            pageInfo {
+              hasNextPage
+              endCursor
             }
-            customer {
-              firstName
-              lastName
-              email
-            }
-            lineItems(first: 5) {
-              edges {
-                node {
-                  title
-                  quantity
-                  variant {
-                    price
+            edges {
+              node {
+                id
+                name
+                createdAt
+                displayFinancialStatus
+                displayFulfillmentStatus
+                totalPriceSet {
+                  shopMoney {
+                    amount
+                    currencyCode
                   }
+                }
+                customer {
+                  firstName
+                  lastName
+                  email
                 }
               }
             }
           }
         }
+      `;
+
+      const response = await admin.graphql(query);
+      const data = await response.json();
+
+      if (data.errors) {
+        throw new Error(data.errors.map(e => e.message).join("; "));
       }
+
+      const orders = data.data.orders.edges.map(({ node }) => ({
+        id: node.id,
+        name: node.name,
+        createdAt: node.createdAt,
+        financialStatus: node.displayFinancialStatus,
+        fulfillmentStatus: node.displayFulfillmentStatus,
+        total: node.totalPriceSet?.shopMoney
+          ? `${node.totalPriceSet.shopMoney.amount} ${node.totalPriceSet.shopMoney.currencyCode}`
+          : "N/A",
+        customer: node.customer
+          ? `${node.customer.firstName || ""} ${node.customer.lastName || ""} (${node.customer.email || ""})`
+          : "Guest",
+      }));
+
+      allOrders.push(...orders);
+
+      hasNextPage = data.data.orders.pageInfo.hasNextPage;
+      endCursor = data.data.orders.pageInfo.endCursor;
     }
-  `);
 
-  const data = await response.json();
-  const orders = data.data.orders.edges.map(({ node }) => ({
-    id: node.id,
-    name: node.name,
-    createdAt: node.createdAt,
-    fulfillmentStatus: node.displayFulfillmentStatus,
-    financialStatus: node.displayFinancialStatus,
-    total: `${node.totalPriceSet.shopMoney.amount} ${node.totalPriceSet.shopMoney.currencyCode}`,
-    customer: node.customer
-      ? `${node.customer.firstName || ""} ${node.customer.lastName || ""} (${node.customer.email || ""})`
-      : "Guest",
-    lineItems: node.lineItems.edges.map(({ node: item }) => ({
-      title: item.title,
-      quantity: item.quantity,
-      price: item.variant?.price,
-    })),
-  }));
-
-  return json({ orders });
+    return json({ orders: allOrders });
+  } catch (error) {
+    return json({ orders: [], error: error.message }, { status: 500 });
+  }
 };
 
 export default function OrdersPage() {
-  const { orders } = useLoaderData();
+  const { orders, error } = useLoaderData();
 
   return (
     <Page title="All Orders">
       <Layout>
         <Layout.Section>
-          {orders.length === 0 ? (
+          {error && (
+            <Card sectioned>
+              <Text color="critical">Error: {error}</Text>
+            </Card>
+          )}
+          {orders.length === 0 && !error ? (
             <Text>No orders found.</Text>
           ) : (
             <DataTable
@@ -85,6 +99,7 @@ export default function OrdersPage() {
                 "text",
                 "text",
                 "text",
+                "text"
               ]}
               headings={[
                 "Order",
@@ -93,6 +108,7 @@ export default function OrdersPage() {
                 "Total",
                 "Financial Status",
                 "Fulfillment Status",
+                "ID"
               ]}
               rows={orders.map(order => [
                 order.name,
@@ -105,6 +121,7 @@ export default function OrdersPage() {
                 <Badge status={order.fulfillmentStatus === "FULFILLED" ? "success" : "warning"}>
                   {order.fulfillmentStatus}
                 </Badge>,
+                order.id,
               ])}
             />
           )}
