@@ -1,15 +1,22 @@
 # !! Note to collaborators !!
 
-You will need to recreate node_modules on your own.
+Updates 7/13: 
 
-If you haven't already, use
+- Successfully created check to ensure only **real** store requests are added to the request queue
+- Added "dumb" refund amount (total - shipping)
+- Created refund status infrastructure [not 100% working]
 
-```shell
-npm install
-```
+To Do (short):
 
-Please let me know if this doesn't work.
+- Repeat requests / invalid requests are still added to the request queue; figure out a way to deal with this
+- **OR**, set up another queue for valid requests only (i.e., all requests vs. successful requests)
+- Working refund functionality (exists, but not functional)
 
+To Do (long):
+
+- User-friendly return interface (no OAuth yet) with option to choose which product to return
+     (requires basic product interactivity)
+- Refine refund price calculation to account for this 
 
 
 # Shopify App Template - Remix
