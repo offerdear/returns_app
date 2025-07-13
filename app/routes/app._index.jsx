@@ -118,8 +118,11 @@ export default function Index() {
               <BlockStack gap="500">
                 <BlockStack gap="200">
                   <Text as="h2" variant="headingMd">
-                    Congrats on creating a new Shopify app 🎉
+                    Return Management
                   </Text>
+                  <Button url="/app/products" variant="primary">
+                    View All Products
+                  </Button>
                   <Text variant="bodyMd" as="p">
                     This embedded app template uses{" "}
                     <Link
@@ -307,7 +310,7 @@ export default function Index() {
                       to get started
                     </List.Item>
                     <List.Item>
-                      Explore Shopify’s API with{" "}
+                      Explore Shopify's API with{" "}
                       <Link
                         url="https://shopify.dev/docs/apps/tools/graphiql-admin-api"
                         target="_blank"
