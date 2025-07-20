@@ -2,6 +2,65 @@
 
 You will need to recreate node_modules on your own.
 
+```
+graph TD
+    %% Shopify Platform Layer
+    SA[Shopify Admin<br/>Merchant Dashboard<br/>Host Platform] 
+    
+    %% Frontend Layer
+    UI[Returns App UI<br/>React + JavaScript<br/>Polaris Components<br/>Embedded iframe]
+    
+    %% Server Layer
+    RS[Remix Server<br/>Full-Stack Framework<br/>Server-Side Rendering]
+    
+    %% Backend Layer
+    BE[Returns App Backend<br/>Node.js Runtime<br/>Business Logic<br/>API Routes<br/>Authentication]
+    
+    %% Data Layer
+    PO[Prisma ORM<br/>Database Layer<br/>Type Safety<br/>Migrations<br/>Query Builder]
+    DB[(SQLite Database<br/>Local File Storage<br/>Returns Data<br/>App Settings)]
+    
+    %% External Services
+    API[Shopify API<br/>Orders, Products<br/>Customer Data<br/>GraphQL/REST]
+    WH[Shopify Webhooks<br/>Real-time Events<br/>Order Updates]
+    
+    %% Deployment & Tools
+    DT[Dev Tools<br/>TypeScript<br/>Shopify CLI<br/>Hot Reload]
+    DC[Docker Container<br/>Containerization<br/>Shopify CLI Deploy]
+    
+    %% Connections
+    SA --> UI
+    UI --> RS
+    RS --> BE
+    BE --> PO
+    PO --> DB
+    BE <--> API
+    WH --> BE
+    BE --> DT
+    BE --> DC
+    
+    %% Styling
+    classDef shopify fill:#a0f6b9,stroke:#059212,stroke-width:3px
+    classDef frontend fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    classDef server fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    classDef backend fill:#white,stroke:#black,stroke-width:2px
+    classDef data fill:#e0f2fe,stroke:#0891b2,stroke-width:2px
+    classDef database fill:#fce7f3,stroke:#ec4899,stroke-width:2px
+    classDef tools fill:#f3e8ff,stroke:#8b5cf6,stroke-width:2px
+    classDef deployment fill:#e0e7ff,stroke:#6366f1,stroke-width:2px
+    
+    class SA,API,WH shopify
+    class UI frontend
+    class RS server
+    class BE backend
+    class PO data
+    class DB database
+    class DT tools
+    class DC deployment
+```
+
+
+
 If you haven't already, use
 
 ```shell
