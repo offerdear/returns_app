@@ -4,10 +4,14 @@ import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { NavMenu } from "@shopify/app-bridge-react";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
 import { authenticate } from "../shopify.server";
+import { useEffect } from "react";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export const loader = async ({ request }) => {
+  console.log('🔄 App layout loader called');
+  console.log('🔄 Request URL:', request.url);
+  
   await authenticate.admin(request);
 
   return { apiKey: process.env.SHOPIFY_API_KEY || "" };
@@ -16,13 +20,22 @@ export const loader = async ({ request }) => {
 export default function App() {
   const { apiKey } = useLoaderData();
 
+  useEffect(() => {
+    console.log('🔄 App layout component mounted');
+    console.log('🔄 Current location:', window.location.href);
+  }, []);
+
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
       <NavMenu>
         <Link to="/app" rel="home">
           Home
         </Link>
-        <Link to="/app/additional">Additional page</Link>
+        <Link to="/app/additional">Additional Page</Link>
+        <Link to="/app/products">Products</Link>
+        <Link to="/app/returns">Returns</Link>
+        <Link to="/app/orders">Orders</Link>
+        <Link to="/app/orders/simple">Simple Orders Test</Link>
       </NavMenu>
       <Outlet />
     </AppProvider>

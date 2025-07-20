@@ -30,3 +30,51 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model ReturnRequest {
+  id          Int      @id @default(autoincrement())
+  customerId  String
+  orderId     String
+  reason      String
+  status      String   // e.g., "pending", "approved", "rejected"
+  refunded    Boolean  @default(false)
+  refundAmount Float?  // Total refund amount (excluding shipping)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  receipts    Receipt[]
+  refunds     Refund[]
+}
+
+model Receipt {
+  id               Int            @id @default(autoincrement())
+  returnRequestId  Int
+  fileUrl          String         // URL or path to the uploaded receipt
+  uploadedAt       DateTime       @default(now())
+  refunded         Boolean        @default(false)
+  refundAmount     Float?         // Refund amount for this receipt
+  returnRequest    ReturnRequest  @relation(fields: [returnRequestId], references: [id])
+}
+
+model Refund {
+  id              Int           @id @default(autoincrement())
+  returnRequestId Int
+  shopifyRefundId String        // Shopify's refund ID
+  amount          Float         // Refund amount
+  currency        String        @default("USD")
+  status          String        // "pending", "success", "failed"
+  processedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  returnRequest   ReturnRequest @relation(fields: [returnRequestId], references: [id])
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  shopifyId   String   @unique
+  title       String
+  description String?
+  price       Float?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
