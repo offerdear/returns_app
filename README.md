@@ -1,14 +1,14 @@
-# !! Note to collaborators !!
 
-You will need to recreate node_modules on your own.
 
-```
+# System Architecture Diagram
+
+```mermaid
 graph TD
     %% Shopify Platform Layer
     SA[Shopify Admin<br/>Merchant Dashboard<br/>Host Platform] 
     
     %% Frontend Layer
-    UI[Returns App UI<br/>React + JavaScript<br/>Polaris Components<br/>Embedded iframe]
+    UI[Returns App UI<br/>React + JavaScript + Python<br/>Polaris Components<br/>Embedded iframe]
     
     %% Server Layer
     RS[Remix Server<br/>Full-Stack Framework<br/>Server-Side Rendering]
@@ -60,14 +60,184 @@ graph TD
 ```
 
 
+# Merchant Flow Diagram
 
-If you haven't already, use
-
-```shell
-npm install
+```mermaid
+flowchart TD
+    %% Entry Points
+    START[Merchant logs into Shopify Admin] --> DASH[Returns Dashboard]
+    
+    %% Main Dashboard
+    DASH --> |View Overview| ANALYTICS[Returns Analytics Dashboard<br/>• Total returns this month<br/>• Return rate trends<br/>• Top returned products<br/>• Customer flags & alerts]
+    
+    %% Dashboard Actions
+    ANALYTICS --> |Review Alerts| FLAGS{AI Flags & Alerts}
+    ANALYTICS --> |Manage Returns| PENDING[View Pending Returns]
+    ANALYTICS --> |View Reports| REPORTS[Detailed Reports]
+    ANALYTICS --> |Configure Rules| CONFIG[AI Rules Configuration]
+    
+    %% AI Flags & Alerts
+    FLAGS --> |High Return Customer| CUSTOMER_FLAG[Customer: 30%+ return rate<br/>• View customer history<br/>• Apply restrictions<br/>• Send personalized message]
+    FLAGS --> |Product Issue| PRODUCT_FLAG[Product Alert<br/>• High return rate detected<br/>• View return reasons<br/>• Contact supplier<br/>• Update listing]
+    FLAGS --> |Fraud Detection| FRAUD_FLAG[Potential Fraud<br/>• Suspicious return patterns<br/>• Block future returns<br/>• Review account]
+    
+    %% Return Management Flow
+    PENDING --> RETURN_ITEM[Individual Return Request<br/>Order #12345<br/>Product: iPhone Case<br/>Reason: Defective<br/>Photos: Available]
+    
+    RETURN_ITEM --> DECISION{Review Return}
+    DECISION --> |Approve| APPROVE[Approve Return<br/>• Generate return label<br/>• Send customer notification<br/>• Schedule refund]
+    DECISION --> |Deny| DENY[Deny Return<br/>• Select reason<br/>• Send explanation<br/>• Suggest alternatives]
+    DECISION --> |Request Info| REQUEST[Request More Info<br/>• Ask for photos<br/>• Clarify issue<br/>• Set follow-up reminder]
+    
+    %% Post-Decision Actions
+    APPROVE --> REFUND_OPTS[Refund Options<br/>• Full refund<br/>• Partial refund<br/>• Store credit<br/>• Exchange]
+    DENY --> ARCHIVE_DENY[Archive as Denied]
+    REQUEST --> FOLLOW_UP[Set Follow-up Alert]
+    
+    %% AI Suggestions
+    RETURN_ITEM --> AI_SUGGEST[AI Recommendations<br/>• Suggested action based on history<br/>• Similar case outcomes<br/>• Fraud risk score<br/>• Customer value assessment]
+    
+    %% Reports & Analytics
+    REPORTS --> TREND_ANALYSIS[Trend Analysis<br/>• Return patterns over time<br/>• Seasonal variations<br/>• Product performance<br/>• Cost impact analysis]
+    
+    REPORTS --> CUSTOMER_INSIGHTS[Customer Insights<br/>• Repeat returners<br/>• High-value customers<br/>• Geographic patterns<br/>• Behavior segmentation]
+    
+    %% Configuration
+    CONFIG --> RULES_SETUP[Configure AI Rules<br/>• Set return rate thresholds<br/>• Define fraud indicators<br/>• Approval workflows<br/>• Notification preferences]
+    
+    CONFIG --> AUTOMATION[Automation Settings<br/>• Auto-approve low-risk returns<br/>• Auto-flag suspicious patterns<br/>• Scheduled report delivery<br/>• Integration preferences]
+    
+    %% Bulk Actions
+    PENDING --> BULK[Bulk Actions<br/>• Select multiple returns<br/>• Approve all low-risk<br/>• Deny policy violations<br/>• Export for review]
+    
+    %% Quick Actions from Dashboard
+    ANALYTICS --> QUICK[Quick Actions<br/>• Block problematic customer<br/>• Update return policy<br/>• Contact customer directly<br/>• Escalate to support team]
+    
+    %% Styling
+    classDef entry fill:#e9ffe0,stroke:#85de91,stroke-width:2px
+    classDef dashboard fill:#c2ffca,stroke:#059212,stroke-width:2px
+    classDef analytics fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    classDef decision fill:white,stroke:#58bfaf,stroke-width:2px
+    classDef action fill:#fdffe0,stroke:#d7db95,stroke-width:2px
+    classDef ai fill:#e0e7ff,stroke:#6366f1,stroke-width:2px
+    classDef config fill:#e3fafa,stroke:#57d4d4,stroke-width:2px
+    
+    class START entry
+    class DASH,ANALYTICS dashboard
+    class FLAGS,CUSTOMER_FLAG,PRODUCT_FLAG,FRAUD_FLAG analytics
+    class DECISION decision
+    class APPROVE,DENY,REQUEST,REFUND_OPTS,BULK,QUICK action
+    class AI_SUGGEST,RULES_SETUP,AUTOMATION ai
+    class CONFIG,REPORTS config
 ```
 
-Please let me know if this doesn't work.
+
+
+# Client Flow Diagram
+
+```mermaid
+flowchart TD
+    %% Entry Points
+    START[Customer has product issue] --> ENTRY_POINT{How does customer reach us?}
+    
+    ENTRY_POINT --> |Order email link| EMAIL_LINK[Click Return/Exchange in order email]
+    ENTRY_POINT --> |Store website| WEBSITE[Visit store website<br/>Go to Returns page]
+    ENTRY_POINT --> |Account dashboard| ACCOUNT[Login to customer account<br/>View order history]
+    
+    %% Initial Issue Identification
+    EMAIL_LINK --> ISSUE_SELECT
+    WEBSITE --> ISSUE_SELECT
+    ACCOUNT --> ISSUE_SELECT[Select Your Issue<br/>• Product not working<br/>• Wrong item received<br/>• Damaged in shipping<br/>• Changed mind<br/>• Size/fit issues]
+    
+    %% AI Triage Decision Point
+    ISSUE_SELECT --> AI_TRIAGE{AI Determines<br/>Issue Type}
+    
+    %% Troubleshooting Path (Electronics Focus)
+    AI_TRIAGE --> |Technical Issue Detected| TROUBLESHOOT[AI Troubleshooting Assistant<br/>Hi! I can help fix this issue.<br/>Let's try a few quick solutions first.]
+    
+    TROUBLESHOOT --> DEVICE_INFO[What device are you using?<br/>• Phone model & OS<br/>• Headphones/speakers<br/>• Laptop/computer<br/>• Other electronics]
+    
+    DEVICE_INFO --> PROBLEM_DETAILS[Describe the specific problem:<br/>• Not turning on<br/>• Connection issues<br/>• Performance problems<br/>• Display issues<br/>• Audio problems]
+    
+    PROBLEM_DETAILS --> AI_SOLUTIONS[AI Suggests Solutions<br/>• Step-by-step troubleshooting<br/>• Video tutorials<br/>• Compatibility checks<br/>• Settings adjustments]
+    
+    AI_SOLUTIONS --> SOLUTION_RESULT{Did this solve your issue?}
+    
+    SOLUTION_RESULT --> |Yes - Problem Solved| RESOLVED[Issue Resolved! 🎉<br/>• Glad we could help!<br/>• Ask for feedback<br/>• Offer support contact<br/>• No return needed]
+    
+    SOLUTION_RESULT --> |Partially Fixed| ADDITIONAL[Try Additional Solutions<br/>• More advanced troubleshooting<br/>• Firmware updates<br/>• Reset procedures<br/>• Contact tech support]
+    
+    SOLUTION_RESULT --> |No - Still Broken| PROCEED_RETURN[Proceed with Return<br/>Sorry this didn't work.<br/>Let's get you a replacement.]
+    
+    %% Direct Return Path
+    AI_TRIAGE --> |Non-technical Issue| RETURN_REASON[Select Return Reason<br/>• Wrong size/color<br/>• Doesn't match description<br/>• Damaged on arrival<br/>• Changed mind<br/>• Found better price elsewhere]
+    
+    %% Return Process Flow
+    PROCEED_RETURN --> RETURN_DETAILS
+    RETURN_REASON --> RETURN_DETAILS[Return Details<br/>• Upload photos if damaged<br/>• Describe condition<br/>• Preferred resolution<br/>• Original packaging available?]
+    
+    RETURN_DETAILS --> RETURN_OPTIONS[Choose Return Option<br/>• Full refund<br/>• Exchange for same item<br/>• Exchange for different size/color<br/>• Store credit]
+    
+    RETURN_OPTIONS --> RETURN_METHOD[Return Method<br/>• Drop off at store<br/>• Schedule pickup<br/>• Mail with prepaid label<br/>• Print return label]
+    
+    RETURN_METHOD --> CONFIRMATION[Return Confirmation<br/>• Return request RET-12345<br/>• Email with instructions<br/>• Tracking information<br/>• Expected timeline<br/>• Contact info if needed]
+    
+    %% Follow-up Flow
+    CONFIRMATION --> PACKAGE_RETURN[Customer Returns Package]
+    PACKAGE_RETURN --> TRACKING[Track Return Status<br/>• Package in transit<br/>• Received by merchant<br/>• Being processed<br/>• Refund/exchange complete]
+    
+    %% AI Learning & Prevention
+    RESOLVED --> FEEDBACK[Quick Feedback<br/>• Rate the help 1-5 stars<br/>• What worked best?<br/>• Suggest improvements]
+    
+    PROCEED_RETURN --> PREVENTION[AI Notes for Prevention<br/>• Common issue flagged<br/>• Product improvement suggestion<br/>• Better product descriptions needed]
+    
+    %% Alternative Paths
+    AI_TRIAGE --> |Policy Question| POLICY_HELP[Policy Assistant<br/>• Return time limits<br/>• Condition requirements<br/>• Refund vs exchange<br/>• Shipping costs<br/>• Special circumstances]
+    
+    ADDITIONAL --> EXPERT_HELP[Connect with Expert<br/>• Live chat with tech support<br/>• Schedule phone call<br/>• Video troubleshooting<br/>• Advanced diagnostics]
+    
+    %% Customer Support Integration
+    EXPERT_HELP --> SUPPORT_OUTCOME{Support Outcome}
+    SUPPORT_OUTCOME --> |Issue Fixed| RESOLVED
+    SUPPORT_OUTCOME --> |Still Need Return| PROCEED_RETURN
+    
+    %% Policy Help Flow
+    POLICY_HELP --> POLICY_RESOLVED{Policy Question Resolved?}
+    POLICY_RESOLVED --> |Yes| END_HELP[Customer has clarity<br/>Continues with return/keeps item]
+    POLICY_RESOLVED --> |No| HUMAN_SUPPORT[Connect with<br/>Human Support Agent]
+    HUMAN_SUPPORT --> END_HELP
+    
+    %% Proactive Prevention (Future Feature)
+    START --> |Optional| PROACTIVE[Proactive AI Check<br/>Before returning, let me<br/>check if this is fixable]
+    PROACTIVE --> ISSUE_SELECT
+    
+    %% Final outcomes
+    TRACKING --> PROCESS_COMPLETE[Return Process Complete<br/>• Customer satisfaction survey<br/>• Future purchase incentives<br/>• AI improvement data captured]
+    
+    FEEDBACK --> IMPROVEMENT[Continuous Improvement<br/>• Update troubleshooting database<br/>• Refine AI suggestions<br/>• Product team notifications]
+    
+    PREVENTION --> IMPROVEMENT
+    
+    %% Styling
+    classDef entry fill:#95f985,stroke:#059212,stroke-width:2px
+    classDef ai fill:#e0e7ff,stroke:#6366f1,stroke-width:2px
+    classDef troubleshoot fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    classDef decision fill:#fed7e2,stroke:#f687b3,stroke-width:2px
+    classDef success fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    classDef process fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    classDef support fill:#f3e8ff,stroke:#8b5cf6,stroke-width:2px
+    classDef outcome fill:#f0f9ff,stroke:#0ea5e9,stroke-width:2px
+    
+    class START,ENTRY_POINT entry
+    class AI_TRIAGE,TROUBLESHOOT,AI_SOLUTIONS,POLICY_HELP,PROACTIVE ai
+    class DEVICE_INFO,PROBLEM_DETAILS,ADDITIONAL troubleshoot
+    class SOLUTION_RESULT,SUPPORT_OUTCOME,POLICY_RESOLVED decision
+    class RESOLVED,CONFIRMATION success
+    class RETURN_DETAILS,RETURN_OPTIONS,RETURN_METHOD,TRACKING process
+    class EXPERT_HELP,FEEDBACK,HUMAN_SUPPORT support
+    class PROCESS_COMPLETE,END_HELP,IMPROVEMENT outcome
+```
+
 
 
 
