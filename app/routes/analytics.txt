@@ -1,0 +1,21 @@
+
+Store Return Analytics
+
+Most Returned Products (List 2-3 products):
+Determine the most returned products by looking at the order items and seeing which products have the highest return rate. 
+Determine the return rate by dividing the number of returns by the number of total products ordered.
+
+Most Returned Categories (List 2-3 categories):
+Determine the most returned categories by looking at the order items and seeing which categories have the highest return rate.
+
+Most Returned Reasons (List 2-3 reasons):
+Determine the most returned reasons by looking at the order items and seeing which reasons in the dropdown have the highest return rate.
+
+Most Returned Customers (List 2-3 customers):
+Determine the most returned customers by looking at the order items and seeing which customers have the highest return rate.
+
+Refund Percentage:
+Determine the percentage of returns which are refunded.
+
+Total Refunds:
+Determine the total amount of refunds by summing the refund amount for all refunds.
